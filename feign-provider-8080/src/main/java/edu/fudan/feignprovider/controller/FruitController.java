@@ -1,9 +1,12 @@
 package edu.fudan.feignprovider.controller;
 
-import edu.fudan.feigncommon.Fruit;
+import edu.fudan.feigncommon.FruitVo;
+import edu.fudan.feignprovider.entity.Fruit;
+import edu.fudan.feignprovider.repository.FruitRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,47 +14,42 @@ import java.util.List;
 @RequestMapping("/fruits")
 public class FruitController {
 
-    private final List<Fruit> fruit = new ArrayList<>();
-
-    @PostConstruct
-    public void init() {
-        fruit.add(Fruit.builder().id(1).name("apple").color("red").origin("China").build());
-        fruit.add(Fruit.builder().id(2).name("banana").color("yellow").origin("China").build());
-        fruit.add(Fruit.builder().id(3).name("grape").color("purple").origin("China").build());
-        fruit.add(Fruit.builder().id(4).name("orange").color("orange").origin("China").build());
-    }
+    @Autowired
+    private FruitRepository fruitRepository;
 
     @GetMapping
-    public List<Fruit> getFruits() {
-        return fruit;
+    public List<FruitVo> getFruits() {
+        List<FruitVo> fruitVoList = new ArrayList<>();
+        fruitRepository.findAll().forEach(fruit -> {
+            fruitVoList.add(FruitVo.builder().id(fruit.getId().intValue()).name(fruit.getName()).color(fruit.getColor()).origin(fruit.getOrigin()).build());
+        });
+        return fruitVoList;
     }
 
     @GetMapping("/{id}")
-    public Fruit getFruit(@PathVariable Integer id) {
-        return this.fruit.stream()
-                .filter(f -> f.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public FruitVo getFruit(@PathVariable Integer id) {
+        Fruit fruit = fruitRepository.findOne(id.longValue());
+        return FruitVo.builder().id(fruit.getId().intValue()).name(fruit.getName()).color(fruit.getColor()).origin(fruit.getOrigin()).build();
     }
 
     @PostMapping
-    public void addFruit(@RequestBody Fruit fruit) {
-        this.fruit.add(fruit);
+    public void addFruit(@RequestBody FruitVo fruitVo) {
+        float x = new SecureRandom().nextFloat();
+        if (x < 0.5) {
+            throw new RuntimeException("Random exception");
+        }
+        Fruit fruit = Fruit.builder().id(fruitVo.getId().longValue()).name(fruitVo.getName()).color(fruitVo.getColor()).origin(fruitVo.getOrigin()).build();
+        fruitRepository.save(fruit);
     }
 
     @PutMapping
-    public void updateFruit(@RequestBody Fruit fruit) {
-        this.fruit.stream()
-                .filter(f -> f.getId().equals(fruit.getId()))
-                .forEach(f -> {
-                    f.setName(fruit.getName());
-                    f.setColor(fruit.getColor());
-                    f.setOrigin(fruit.getOrigin());
-                });
+    public void updateFruit(@RequestBody FruitVo fruitVo) {
+        Fruit fruit = Fruit.builder().id(fruitVo.getId().longValue()).name(fruitVo.getName()).color(fruitVo.getColor()).origin(fruitVo.getOrigin()).build();
+        fruitRepository.save(fruit);
     }
 
     @DeleteMapping("/{id}")
     public void deleteFruit(@PathVariable Integer id) {
-        this.fruit.removeIf(f -> f.getId().equals(id));
+        fruitRepository.delete(id.longValue());
     }
 }

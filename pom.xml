@@ -10,7 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <properties>
-        <spring-cloud.version>Edgware.SR4</spring-cloud.version>
+        <spring-cloud.version>Edgware.SR6</spring-cloud.version>
+        <!-- https://seata.apache.org/docs/overview/faq#9 这里说seata依赖的jackson至少是2.9.9 -->
+        <jackson.version>2.11.0</jackson.version>
     </properties>
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.fudan</groupId>

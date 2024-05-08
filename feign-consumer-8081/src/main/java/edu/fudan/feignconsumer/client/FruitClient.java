@@ -1,6 +1,6 @@
 package edu.fudan.feignconsumer.client;
 
-import edu.fudan.feigncommon.Fruit;
+import edu.fudan.feigncommon.FruitVo;
 import edu.fudan.feignconsumer.client.fallback.FruitClientFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +11,16 @@ import java.util.List;
 public interface FruitClient {
 
     @GetMapping
-    List<Fruit> getFruits();
+    List<FruitVo> getFruits();
 
     @GetMapping("/{id}")
-    Fruit getFruit(@PathVariable(value = "id") Integer id);
+    FruitVo getFruit(@PathVariable(value = "id") Integer id);
 
     @PostMapping
-    void addFruit(@RequestBody Fruit fruit);
+    void addFruit(@RequestBody FruitVo fruitVo);
 
     @PutMapping
-    public void updateFruit(@RequestBody Fruit fruit);
+    public void updateFruit(@RequestBody FruitVo fruitVo);
 
     @DeleteMapping("/{id}")
     public void deleteFruit(@PathVariable(value = "id") Integer id);

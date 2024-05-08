@@ -1,0 +1,30 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: feign-provider
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    password: 123456
+    url: jdbc:mysql://192.168.1.121:13306/feign_provider?useSSL=false&serverTimezone=GMT%2B8
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+seata:
+  enabled: true
+  application-id: feign-demo
+  tx-service-group: default_tx_group
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    grouplist:
+      default: ${seata.address:127.0.0.1}:${seata.port:8091}
+  registry:
+    type: file
+  config:
+    type: file
